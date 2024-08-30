@@ -36,7 +36,7 @@ const player = ref({
   speed: 5,
   dx: 0,
   dy: 0,
-  gravity: 0.5,
+  gravity: 0.7,
   jumpStrength: -10,
   isJumping: false,
   color: 'blue'
