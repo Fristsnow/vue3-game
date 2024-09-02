@@ -27,7 +27,7 @@ import {ref, onMounted, onBeforeUnmount} from 'vue';
 import {isCollidingRect, SIZE, updateElementPositions} from "@/utils/Config.js";
 import {fetchMapElements} from "@/utils/MapUtils.js";
 import {Player} from "@/utils/Player.js";
-import {handleCollision, handleCollisionEvent} from "@/utils/Collision.js";
+import {handleCollision} from "@/utils/Collision.js";
 
 const player = ref({
   x: SIZE,
@@ -47,6 +47,8 @@ const playerGame = new Player(player.value);
 
 const mapElements = ref([]); // 存储地图元素
 
+const mapElementsXY = ref([]);
+
 const initGame = async () => {
   // 初始化地图和玩家
   mapElements.value = await fetchMapElements(); // 从后端获取地图数据
@@ -54,6 +56,11 @@ const initGame = async () => {
   // 添加事件监听器
   window.addEventListener('keydown', playerGame.handleKeyDown);
   window.addEventListener('keyup', playerGame.handleKeyUp);
+
+  mapElementsXY.value = mapElements.value.map(element => [element.x / 20, element.y]);
+
+// 打印结果
+  console.log(mapElementsXY.value)
 
   // 启动游戏循环
   gameLoop();
@@ -85,9 +92,7 @@ const updatePlayerPosition = () => {
   for (const element of mapElements.value) {
     if (isCollidingRect(player.value, element)) {
       // 处理碰撞
-      handleCollision(player.value, element,mapElements.value);
-      // 触发自定义事件
-      handleCollisionEvent(player.value, element,mapElements.value)
+      mapElements.value = handleCollision(player.value, element, mapElements.value, mapElementsXY.value);
     }
   }
 };

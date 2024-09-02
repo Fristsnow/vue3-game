@@ -66,7 +66,7 @@ const convertMapDataToElements = (mapData) => {
                     images: './img/Star.png'
                 });
             }
-            if (mapData[y][x] === "4") { // “3”表示星星
+            if (mapData[y][x] === "4") { // “3”表示墙
                 elements.push({
                     id: `block-${x}-${y}`,
                     x: x * tileSize,

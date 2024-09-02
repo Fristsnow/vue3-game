@@ -1,5 +1,7 @@
 // 碰撞检测
-export const handleCollision = (player, element, mapElements) => {
+import {isCollidingCoordinate, SIZE} from "@/utils/Config.js";
+
+export const handleCollision = (player, element, mapElements, mapElementsXY) => {
     const prevX = player.x - player.dx;
     const prevY = player.y - player.dy;
 
@@ -12,6 +14,7 @@ export const handleCollision = (player, element, mapElements) => {
         );
     };
 
+    handleCollisionEvent(element, mapElementsXY)
 
     if (element.type === 'obstacle') {
         if (prevX + player.width <= element.x) {
@@ -90,20 +93,23 @@ export const handleCollision = (player, element, mapElements) => {
         console.log('星星已收集！');
         alert('星星已收集！');
         // 移除星星
-        mapElements.value = mapElements.filter(el => el.id !== element.id);
+        return mapElements.filter(el => el.id !== element.id);
     }
+    return mapElements;
 };
 
 // 触发自定义事件
-export const handleCollisionEvent = (player, element, mapElements) =>{
-    const prevX = player.x - player.dx;
-    const prevY = player.y - player.dy;
-    for (let y = 0; y < mapElements.length; y++){
-        for (let x = 0; x < mapElements[y].length; x++){
-            // if (mapElements[y][x] == mapElements[15][4]){
-                console.log(mapElements[y][x],'1111');
-            // }
-        }
+const handleCollisionEvent = (element, mapElementsXY) => {
+
+    const elementRect = {
+        x: element.x,
+        y: element.y,
+        width: element.width,
+        height: element.height
+    };
+
+    if (mapElementsXY[elementRect.x, elementRect.y] === mapElementsXY[7 * SIZE, 13 * SIZE]) {
+        console.log('恭喜你，发现一个彩蛋！');
     }
-    // console.log("发现一个作弊位置")
+
 }
