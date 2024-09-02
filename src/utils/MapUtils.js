@@ -15,67 +15,55 @@ export const fetchMapElements = async () => {
 const convertMapDataToElements = (mapData) => {
     const elements = [];
     const tileSize = SIZE; // 假设每个瓦片的大小为 40x40 像素
+    const addElement = (x, y, elementConfig) => {
+        elements.push({
+            id: `block-${x}-${y}`,
+            x: x * tileSize,
+            y: y * tileSize,
+            width: tileSize,
+            height: tileSize,
+            ...elementConfig
+        });
+    }
+
+    if (!Array.isArray(mapData) || mapData.length === 0) {
+        throw new Error('Invalid mapData');
+    }
 
     for (let y = 0; y < mapData.length; y++) {
-        for (let x = 0; x < mapData[y].length; x++) {
-            if (mapData[y][x] === "0") { // “0”表示地面
-                elements.push({
-                    id: `block-${x}-${y}`,
-                    x: x * tileSize,
-                    y: y * tileSize,
-                    width: tileSize,
-                    height: tileSize,
-                    type: 'ground',
-                    images: './img/Ground-top.jpg'
-                });
-            }
-            if (mapData[y][x] === "1") { // “1”表示空地
-                elements.push({
-                    id: `block-${x}-${y}`,
-                    x: x * tileSize,
-                    y: y * tileSize,
-                    width: tileSize,
-                    height: tileSize,
-                    type: 'space',
-                    images: ''
-                });
-            }
-            if (mapData[y][x] === "2") { // “2”表示障碍物
-                elements.push({
-                    id: `block-${x}-${y}`,
-                    x: x * tileSize,
-                    y: y * tileSize,
-                    width: tileSize,
-                    height: tileSize,
-                    type: 'obstacle',
-                    images: './img/Ground-top.jpg',
-                    direction: 1, // 1 表示向右移动，-1 表示向左移动
-                    speed: 2, // 移动速度
-                    range: 3 * tileSize, // 移动范围（3格）
-                    startX: x * tileSize // 初始位置
-                });
-            }
-            if (mapData[y][x] === "3") { // “3”表示星星
-                elements.push({
-                    id: `block-${x}-${y}`,
-                    x: x * tileSize,
-                    y: y * tileSize,
-                    width: tileSize,
-                    height: tileSize,
-                    type: 'star',
-                    images: './img/Star.png'
-                });
-            }
-            if (mapData[y][x] === "4") { // “3”表示墙
-                elements.push({
-                    id: `block-${x}-${y}`,
-                    x: x * tileSize,
-                    y: y * tileSize,
-                    width: tileSize,
-                    height: tileSize,
-                    type: 'wall',
-                    images: './img/Ground-top.jpg'
-                });
+        const row = mapData[y];
+        if (!Array.isArray(row)) {
+            throw new Error('Invalid row in mapData');
+        }
+        for (let x = 0; x < row.length; x++) {
+            switch (mapData[y][x]) {
+                case "0": // “0”表示地面
+                    addElement(x, y, {type: 'ground', images: './img/Ground-top.jpg'});
+                    break;
+                case "1": // “1”表示空地
+                    addElement(x, y, {type: 'space', images: ''});
+                    break;
+                case "2": // “2”表示障碍物
+                    elements.push({
+                        id: `block-${x}-${y}`,
+                        x: x * tileSize,
+                        y: y * tileSize,
+                        width: tileSize,
+                        height: tileSize,
+                        type: 'obstacle',
+                        images: './img/Ground-top.jpg',
+                        direction: 1, // 1 表示向右移动，-1 表示向左移动
+                        speed: 2, // 移动速度
+                        range: 3 * tileSize, // 移动范围（3格）
+                        startX: x * tileSize // 初始位置
+                    });
+                    break;
+                case "3": // “3”表示星星
+                    addElement(x, y, {type: 'star', images: './img/Star.png'});
+                    break;
+                case "4": // “4”表示墙
+                    addElement(x, y, {type: 'wall', images: './img/Ground-top.jpg'});
+                    break;
             }
         }
     }
