@@ -27,16 +27,17 @@ import {ref, onMounted, onBeforeUnmount} from 'vue';
 import {isCollidingRect, SIZE, updateElementPositions} from "@/utils/Config.js";
 import {fetchMapElements} from "@/utils/MapUtils.js";
 import {Player} from "@/utils/Player.js";
+import {handleCollision, handleCollisionEvent} from "@/utils/Collision.js";
 
 const player = ref({
   x: SIZE,
-  y: SIZE * 33,
+  y: SIZE * 15,
   width: SIZE,
   height: SIZE,
   speed: 5,
   dx: 0,
   dy: 0,
-  gravity: 0.7,
+  gravity: 0.5,
   jumpStrength: -10,
   isJumping: false,
   color: 'blue'
@@ -84,63 +85,14 @@ const updatePlayerPosition = () => {
   for (const element of mapElements.value) {
     if (isCollidingRect(player.value, element)) {
       // 处理碰撞
-      handleCollision(player.value, element);
+      handleCollision(player.value, element,mapElements.value);
+      // 触发自定义事件
+      handleCollisionEvent(player.value, element,mapElements.value)
     }
   }
 };
-const handleCollision = (player, element) => {
-  if (element.type === 'obstacle') { // 障碍物
-    const prevX = player.x - player.dx;
-    const prevY = player.y - player.dy;
 
-    // 判断碰撞方向
-    if (prevX + player.width <= element.x) {
-      console.log('从左边碰到障碍物');
-      player.x = element.x - player.width; // 停止玩家的横向移动
-    } else if (prevX >= element.x + element.width) {
-      console.log('从右边碰到障碍物');
-      player.x = element.x + element.width;
-    } else if (prevY + player.height <= element.y) {
-      console.log('从上边碰到障碍物');
-      player.y = element.y - player.height;
-      player.dy = 0; // 停止玩家的纵向移动
-      player.isJumping = false; // 允许再次跳跃
-    } else if (prevY >= element.y + element.height) {
-      console.log('从下边碰到障碍物');
-      player.y = element.y + element.height;
-      player.dy = 0;
-    }
-  }
-  // 碰撞类型：地面
-  if (element.type === 'ground') {
-    if (player.dy > 0 && player.y + player.height > element.y) {
-      // 玩家从上方落到地面或障碍物
-      player.y = element.y - player.height;  // 玩家停留在地面上
-      player.dy = 0;  // 重置垂直速度
-      player.isJumping = false;  // 重置跳跃状态
-    } else if (player.dy < 0 && player.y < element.y + element.height) {
-      // 玩家撞到障碍物的下方
-      player.y = element.y + element.height;
-      player.dy = 0;
-    } else if (player.dx > 0 && player.x + player.width > element.x) {
-      // 玩家从左侧撞到障碍物
-      player.x = element.x - player.width;
-      player.dx = 0;
-    } else if (player.dx < 0 && player.x < element.x + element.width) {
-      // 玩家从右侧撞到障碍物
-      player.x = element.x + element.width;
-      player.dx = 0;
-    }
-  }
-  // 碰撞类型：星星（3）
-  else if (element.type === 'star') {
-    // 处理星星碰撞逻辑，例如增加得分或触发事件
-    console.log('星星已收集！');
-    alert('星星已收集！');
-    // 移除星星
-    mapElements.value = mapElements.value.filter(el => el.id !== element.id);
-  }
-};
+
 const gameLoop = () => {
   updatePlayerPosition();
   updateElementPositions(mapElements.value)
@@ -163,7 +115,7 @@ onBeforeUnmount(() => {
   width: 100vw; /* 设置游戏容器的宽度 */
   height: 100vh; /* 设置游戏容器的高度 */
   margin: auto;
-  background: #000000;
+  background: #ffffff;
   border: 1px solid #000;
   overflow: hidden;
 }
@@ -176,6 +128,6 @@ onBeforeUnmount(() => {
 
 .player {
   position: absolute;
-  background-color: blue;
+  background-color: aqua;
 }
 </style>

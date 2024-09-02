@@ -2,7 +2,7 @@ import {SIZE} from "@/utils/Config.js";
 
 export const fetchMapElements = async () => {
     try {
-        const response = await fetch('./map/map.json');
+        const response = await fetch('./map/map1.json');
         const data = await response.json();
 
         // 将地图数据转换为元素列表
@@ -64,6 +64,17 @@ const convertMapDataToElements = (mapData) => {
                     height: tileSize,
                     type: 'star',
                     images: './img/Star.png'
+                });
+            }
+            if (mapData[y][x] === "4") { // “3”表示星星
+                elements.push({
+                    id: `block-${x}-${y}`,
+                    x: x * tileSize,
+                    y: y * tileSize,
+                    width: tileSize,
+                    height: tileSize,
+                    type: 'wall',
+                    images: './img/Ground-top.jpg'
                 });
             }
         }
