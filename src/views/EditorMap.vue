@@ -6,16 +6,18 @@
       <button :class="{ selected: currentTool === 'obstacle' }" @click="selectTool('obstacle')">障碍物</button>
       <button :class="{ selected: currentTool === 'star' }" @click="selectTool('star')">星星</button>
       <button :class="{ selected: currentTool === 'wall' }" @click="selectTool('wall')">墙</button>
+      <button @click="exportMap">导出地图</button>
     </div>
-    <div ref="gameContainer" class="game-container" @mousedown="handleClickOrDrag" @mousemove="dragElement" @mouseup="endDrag">
+    <div ref="gameContainer" class="game-container" @mousedown="handleClickOrDrag" @mousemove="dragElement"
+         @mouseup="endDrag">
       <!-- 地图元素将在这里动态生成 -->
     </div>
   </div>
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue';
-import { SIZE } from '@/utils/Config.js';
+import {onMounted, ref} from 'vue';
+import {SIZE} from '@/utils/Config.js';
 
 const gameContainer = ref(null);
 const currentTool = ref(null);
@@ -73,7 +75,14 @@ const convertMapDataToElements = (mapData) => {
           addElement(x, y, {type: 'space', images: ''});
           break;
         case "2": // “2”表示障碍物
-          addElement(x, y, {type: 'obstacle', images: './img/Ground-top.jpg', direction: 1, speed: 2, range: 3 * tileSize, startX: x * tileSize});
+          addElement(x, y, {
+            type: 'obstacle',
+            images: './img/Ground-top.jpg',
+            direction: 1,
+            speed: 2,
+            range: 3 * tileSize,
+            startX: x * tileSize
+          });
           break;
         case "3": // “3”表示星星
           addElement(x, y, {type: 'star', images: './img/Star.png'});
@@ -113,12 +122,25 @@ const placeElement = (x, y, elementType) => {
 
 const getElementTypeConfig = (type) => {
   switch (type) {
-    case 'ground': return {type: 'ground', images: './img/Ground-top.jpg'};
-    case 'space': return {type: 'space', images: ''};
-    case 'obstacle': return {type: 'obstacle', images: './img/Ground-top.jpg', direction: 1, speed: 2, range: 3 * SIZE, startX: x * SIZE};
-    case 'star': return {type: 'star', images: './img/Star.png'};
-    case 'wall': return {type: 'wall', images: './img/Ground-top.jpg'};
-    default: return {};
+    case 'ground':
+      return {type: 'ground', images: './img/Ground-top.jpg'};
+    case 'space':
+      return {type: 'space', images: ''};
+    case 'obstacle':
+      return {
+        type: 'obstacle',
+        images: './img/Ground-top.jpg',
+        direction: 1,
+        speed: 2,
+        range: 3 * SIZE,
+        startX: x * SIZE
+      };
+    case 'star':
+      return {type: 'star', images: './img/Star.png'};
+    case 'wall':
+      return {type: 'wall', images: './img/Ground-top.jpg'};
+    default:
+      return {};
   }
 };
 
@@ -168,9 +190,7 @@ const placeOnClick = (event) => {
   const y = Math.floor((event.clientY - rect.top) / SIZE);
 
   if (x >= 0 && y >= 0 && x < mapData.value[0].length && y < mapData.value.length) {
-    // if (currentTool.value && mapData.value[y][x] === '1') {
-      placeElement(x, y, currentTool.value);
-    // }
+    placeElement(x, y, currentTool.value);
   }
 };
 const handleClickOrDrag = (event) => {
@@ -181,7 +201,7 @@ const handleClickOrDrag = (event) => {
     const y = Math.floor((event.clientY - rect.top) / SIZE);
 
     if (x >= 0 && y >= 0 && x < mapData.value[0].length && y < mapData.value.length) {
-      dragStartPos.value = { x, y };
+      dragStartPos.value = {x, y};
       placeElement(x, y, currentTool.value);
     }
   }
@@ -209,7 +229,7 @@ const dragElement = (event) => {
       });
 
       // 更新起始位置
-      dragStartPos.value = { x: newX, y: newY };
+      dragStartPos.value = {x: newX, y: newY};
     }
   }
 };
