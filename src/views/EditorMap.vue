@@ -311,7 +311,7 @@ onMounted(() => {
   fetchMapElements();
 
   const container = gameContainer.value;
-  container.addEventListener('mousedown', startDrag);
+  container.addEventListener('mousedown', handleClickOrDrag);
   container.addEventListener('mousemove', dragElement);
   container.addEventListener('mouseup', endDrag);
 });

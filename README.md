@@ -1,5 +1,10 @@
 # vue3-game
 
+1.实现地图编辑器
+
+2.地图开始游戏
+
+
 This template should help get you started developing with Vue 3 in Vite.
 
 ## Recommended IDE Setup
