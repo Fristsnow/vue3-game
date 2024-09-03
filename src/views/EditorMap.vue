@@ -42,6 +42,27 @@ const fetchMapElements = async () => {
     console.error('Error fetching map elements:', error);
   }
 };
+// 添加导出地图的方法
+const exportMap = () => {
+  // 创建Blob对象存储JSON数据
+  const mapDataBlob = new Blob([JSON.stringify({ map: mapData.value })], { type: 'application/json' });
+
+  // 创建一个临时的URL表示这个Blob对象
+  const url = URL.createObjectURL(mapDataBlob);
+
+  // 创建隐藏的可下载链接
+  const downloadLink = document.createElement('a');
+  downloadLink.href = url;
+  downloadLink.download = 'map.json'; // 自定义下载文件名
+
+  // 触发点击下载
+  document.body.appendChild(downloadLink);
+  downloadLink.click();
+
+  // 清理临时创建的对象URL
+  document.body.removeChild(downloadLink);
+  URL.revokeObjectURL(url);
+};
 
 const convertMapDataToElements = (mapData) => {
   const elements = [];
@@ -109,7 +130,26 @@ const placeElement = (x, y, elementType) => {
     }
 
     // 更新地图数据
-    mapData.value[y][x] = elementType;
+    // mapData.value[y][x] = elementType;
+    let value;
+    switch (elementType) {
+      case 'star':
+        value = '3';
+        break;
+      case 'ground':
+        value = '0';
+        break;
+      case 'obstacle':
+        value = '2';
+        break;
+      case 'wall':
+        value = '4';
+        break;
+      default:
+        value = '1'; // 空地
+    }
+
+    mapData.value[y][x] = value;
 
     // 更新 elements 数组
     const elementConfig = getElementTypeConfig(elementType);
