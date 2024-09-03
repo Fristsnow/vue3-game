@@ -59,9 +59,6 @@ const initGame = async () => {
 
   mapElementsXY.value = mapElements.value.map(element => [element.x / 20, element.y]);
 
-// 打印结果
-  console.log(mapElementsXY.value)
-
   // 启动游戏循环
   gameLoop();
 };
