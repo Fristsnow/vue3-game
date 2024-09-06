@@ -1,7 +1,7 @@
 // 碰撞检测
 import {isCollidingCoordinate, SIZE} from "@/utils/Config.js";
 
-export const handleCollision = (player, element, mapElements, mapElementsXY) => {
+export const handleCollision = (player, element, mapElements, mapElementsXY, starCount) => {
     const prevX = player.x - player.dx;
     const prevY = player.y - player.dy;
 
@@ -89,9 +89,12 @@ export const handleCollision = (player, element, mapElements, mapElementsXY) => 
     }
     // 碰撞类型：星星（3）
     else if (element.type === 'star') {
+        if (starCount <= 0) {
+            alert("游戏结束，请重新开始！")
+            return mapElements;
+        }
         // 处理星星碰撞逻辑，例如增加得分或触发事件
         console.log('星星已收集！');
-        alert('星星已收集！');
         // 移除星星
         return mapElements.filter(el => el.id !== element.id);
     }

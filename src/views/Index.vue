@@ -23,7 +23,7 @@
 </template>
 
 <script setup>
-import {ref, onMounted, onBeforeUnmount} from 'vue';
+import {ref, onMounted, watch, onBeforeUnmount} from 'vue';
 import {isCollidingRect, SIZE, updateElementPositions} from "@/utils/Config.js";
 import {fetchMapElements} from "@/utils/MapUtils.js";
 import {Player} from "@/utils/Player.js";
@@ -43,6 +43,8 @@ const player = ref({
   color: 'blue'
 });
 
+const starCount = ref(0)
+
 const playerGame = new Player(player.value);
 
 const mapElements = ref([]); // 存储地图元素
@@ -59,6 +61,9 @@ const initGame = async () => {
 
   mapElementsXY.value = mapElements.value.map(element => [element.x / 20, element.y]);
 
+  starCount.value = handleStarCount(mapElements.value);
+
+  console.log(starCount.value,'star-count')
   // 启动游戏循环
   gameLoop();
 };
@@ -89,11 +94,28 @@ const updatePlayerPosition = () => {
   for (const element of mapElements.value) {
     if (isCollidingRect(player.value, element)) {
       // 处理碰撞
-      mapElements.value = handleCollision(player.value, element, mapElements.value, mapElementsXY.value);
+      mapElements.value = handleCollision(player.value, element, mapElements.value, mapElementsXY.value,starCount);
     }
   }
 };
+const handleStarCount = (map) => {
+  // 初始化计数器
+  let count = 0;
 
+// 遍历数组
+  for (let i = 0; i < map.length; i++) {
+    for (let j = 0; j < map[i].length; j++) {
+      if (map[i][j] === "3") {
+        // 找到一个 '3'，计数器加一
+        count++;
+      }
+    }
+  }
+  return count;
+}
+watch(mapElements, (newVal, oldVal) => {
+  starCount.value = handleStarCount(mapElements.value)
+})
 
 const gameLoop = () => {
   updatePlayerPosition();
