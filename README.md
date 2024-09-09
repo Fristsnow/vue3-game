@@ -1,19 +1,11 @@
 # vue3-game
 
-1.实现地图编辑器
+### 1.实现地图编辑器
 
-2.地图开始游戏
+### 2.地图开始游戏
 
+### 3.新增剧情内容组件
 
-This template should help get you started developing with Vue 3 in Vite.
-
-## Recommended IDE Setup
-
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vitejs.dev/config/).
 
 ## Project Setup
 
