@@ -13,6 +13,11 @@ const router = createRouter({
             path: '/editor-map',
             name: 'editor-map',
             component: () => import('../views/EditorMap.vue')
+        },
+        {
+            path: '/plot-content',
+            name: 'plot-content',
+            component: () => import('../views/PlotContent.vue')
         }
     ]
 })
