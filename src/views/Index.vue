@@ -1,5 +1,5 @@
 <template>
-  <div class="game-container">
+  <div class="game-container" @mousedown="handleMouseDown">
     <div
         v-for="element in mapElements"
         :key="element.id"
@@ -10,14 +10,20 @@
           width: `${element.width}px`,
           height: `${element.height}px`,
           backgroundImage: `url('${element.images}')`
-        }
-    ">
+        }">
     </div>
     <div class="player"
          :style="{ left: `${player.x}px`, top: `${player.y}px`, width: `${player.width}px`, height: `${player.height}px`, backgroundColor: player.color }">
     </div>
     <div class="game-container-footer">
 
+    </div>
+    <!-- 显示子弹 -->
+    <div
+        v-for="bullet in bullets"
+        :key="bullet.id"
+        class="bullet"
+        :style="{ left: `${bullet.x}px`, top: `${bullet.y}px`, width: '5px', height: '5px' }">
     </div>
   </div>
 </template>
@@ -28,6 +34,7 @@ import {isCollidingRect, SIZE, updateElementPositions} from "@/utils/Config.js";
 import {fetchMapElements} from "@/utils/MapUtils.js";
 import {Player} from "@/utils/Player.js";
 import {handleCollision} from "@/utils/Collision.js";
+import bulletManger from "@/utils/Bullet.js";
 
 const player = ref({
   x: SIZE,
@@ -42,6 +49,7 @@ const player = ref({
   isJumping: false,
   color: 'blue'
 });
+const bullets = ref([]); // 存储子弹列表
 
 const starCount = ref(0)
 
@@ -54,7 +62,6 @@ const mapElementsXY = ref([]);
 const initGame = async () => {
   // 初始化地图和玩家
   mapElements.value = await fetchMapElements(); // 从后端获取地图数据
-
   // 添加事件监听器
   window.addEventListener('keydown', playerGame.handleKeyDown);
   window.addEventListener('keyup', playerGame.handleKeyUp);
@@ -63,10 +70,17 @@ const initGame = async () => {
 
   starCount.value = handleStarCount(mapElements.value);
 
-  console.log(starCount.value,'star-count')
+  console.log(starCount.value, 'star-count')
   // 启动游戏循环
   gameLoop();
 };
+
+const handleMouseDown = (event) => {
+  if (event.button === 0) { // 左键
+    bulletManger.shootBullet(bullets.value, player.value);
+  }
+};
+
 const updatePlayerPosition = () => {
   const prevX = player.value.x;
   const prevY = player.value.y;
@@ -94,7 +108,7 @@ const updatePlayerPosition = () => {
   for (const element of mapElements.value) {
     if (isCollidingRect(player.value, element)) {
       // 处理碰撞
-      mapElements.value = handleCollision(player.value, element, mapElements.value, mapElementsXY.value,starCount);
+      mapElements.value = handleCollision(player.value, element, mapElements.value, mapElementsXY.value, starCount);
     }
   }
 };
@@ -120,6 +134,7 @@ watch(mapElements, (newVal, oldVal) => {
 const gameLoop = () => {
   updatePlayerPosition();
   updateElementPositions(mapElements.value)
+  bulletManger.updateBullets(bullets.value, '.game-container', mapElements.value)
   requestAnimationFrame(gameLoop);
 };
 
@@ -153,5 +168,10 @@ onBeforeUnmount(() => {
 .player {
   position: absolute;
   background-color: aqua;
+}
+
+.bullet {
+  position: absolute;
+  background-color: red;
 }
 </style>
