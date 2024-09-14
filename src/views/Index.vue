@@ -16,7 +16,7 @@
          :style="{ left: `${player.x}px`, top: `${player.y}px`, width: `${player.width}px`, height: `${player.height}px`, backgroundColor: player.color }">
     </div>
     <div class="game-container-footer">
-
+      <!-- TODO 底部技能栏 -->
     </div>
     <!-- 显示子弹 -->
     <div
@@ -30,10 +30,9 @@
 
 <script setup>
 import {ref, onMounted, watch, onBeforeUnmount} from 'vue';
-import {isCollidingRect, SIZE, updateElementPositions} from "@/utils/Config.js";
+import {SIZE, updateElementPositions} from "@/utils/Config.js";
 import {fetchMapElements} from "@/utils/MapUtils.js";
 import {Player} from "@/utils/Player.js";
-import {handleCollision} from "@/utils/Collision.js";
 import bulletManger from "@/utils/Bullet.js";
 
 const player = ref({
@@ -68,9 +67,6 @@ const initGame = async () => {
 
   mapElementsXY.value = mapElements.value.map(element => [element.x / 20, element.y]);
 
-  starCount.value = handleStarCount(mapElements.value);
-
-  console.log(starCount.value, 'star-count')
   // 启动游戏循环
   gameLoop();
 };
@@ -81,28 +77,17 @@ const handleMouseDown = (event) => {
   }
 };
 
-const handleStarCount = (map) => {
-  // 初始化计数器
-  let count = 0;
-
-// 遍历数组
-  for (let i = 0; i < map.length; i++) {
-    for (let j = 0; j < map[i].length; j++) {
-      if (map[i][j] === "3") {
-        // 找到一个 '3'，计数器加一
-        count++;
-      }
-    }
-  }
-  return count;
-}
-watch(mapElements, (newVal, oldVal) => {
-  starCount.value = handleStarCount(mapElements.value)
-})
-
 const gameLoop = () => {
-  playerGame.updatePlayerPosition(player.value,mapElements.value,mapElementsXY.value,starCount.value);
-  updateElementPositions(mapElements.value)
+  let obj = playerGame.updatePlayerPosition(
+      player.value,
+      mapElements.value,
+      mapElementsXY.value,
+      starCount.value
+  )
+  mapElements.value = obj.mapElements
+  starCount.value = obj.starCount
+  console.log(starCount.value,'star-countsssss')
+  updateElementPositions(mapElements.value);
   bullets.value = bulletManger.updateBullets(bullets.value, '.game-container', mapElements.value)
   requestAnimationFrame(gameLoop);
 };

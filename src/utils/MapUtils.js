@@ -2,7 +2,7 @@ import {SIZE} from "@/utils/Config.js";
 
 export const fetchMapElements = async () => {
     try {
-        const response = await fetch('./map/map.json');
+        const response = await fetch('./map/map1.json');
         const data = await response.json();
 
         // 将地图数据转换为元素列表

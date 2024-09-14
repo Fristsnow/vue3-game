@@ -88,17 +88,24 @@ export const handleCollision = (player, element, mapElements, mapElementsXY, sta
         }
     }
     // 碰撞类型：星星（3）
-    else if (element.type === 'star') {
-        if (starCount <= 0) {
+    if (element.type === 'star') {
+        if (starCount >= 2) {
             alert("游戏结束，请重新开始！")
-            return mapElements;
         }
         // 处理星星碰撞逻辑，例如增加得分或触发事件
         console.log('星星已收集！');
         // 移除星星
-        return mapElements.filter(el => el.id !== element.id);
+        mapElements = mapElements.filter(el => el.id !== element.id)
+        starCount = starCount + 1
+        return {
+            'mapElements': mapElements,
+            'starCount': starCount,
+        };
     }
-    return mapElements;
+    return {
+        'mapElements': mapElements,
+        'starCount': starCount,
+    };
 };
 
 // 触发自定义事件

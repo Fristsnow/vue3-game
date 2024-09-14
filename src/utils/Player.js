@@ -37,7 +37,7 @@ export class Player {
                 break;
         }
     };
-    updatePlayerPosition = (player,mapElements,mapElementsXY,starCount) => {
+    updatePlayerPosition = (player, mapElements, mapElementsXY, starCount) => {
         const prevX = player.x;
         const prevY = player.y;
 
@@ -60,12 +60,17 @@ export class Player {
             player.isJumping = false;
         }
 
+        let obj = {
+            'mapElements': mapElements,
+            'starCount': starCount,
+        }
         // 碰撞检测
         for (const element of mapElements) {
             if (isCollidingRect(player, element)) {
                 // 处理碰撞
-                mapElements = handleCollision(player, element, mapElements, mapElementsXY, starCount);
+                obj = handleCollision(player, element, mapElements, mapElementsXY, starCount);
             }
         }
+        return obj;
     };
 }

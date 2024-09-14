@@ -26,7 +26,6 @@ class Bullet {
             x: player.x + (player.color === 'blue' ? player.width : 0),
             y: player.y + player.height / 2 - 2.5,
             dx: player.color === 'blue' ? 10 : -10,
-            // color: player.color,
         };
         if (bullets.length <= 5) {
             bullets.push(bullet);
