@@ -3,7 +3,7 @@ import {isCollidingRect} from "@/utils/Config.js";
 class Bullet {
     // 更新子弹位置
     updateBullets = (bullets, id, mapElements) => {
-        bullets.filter(bullet => {
+        return bullets.filter(bullet => {
             bullet.x += bullet.dx;
             const container = document.querySelector(id);
             // 检查子弹是否超出边界

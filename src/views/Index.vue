@@ -81,37 +81,6 @@ const handleMouseDown = (event) => {
   }
 };
 
-const updatePlayerPosition = () => {
-  const prevX = player.value.x;
-  const prevY = player.value.y;
-
-  // 重力作用
-  player.value.dy += player.value.gravity;
-
-  // 更新玩家位置
-  player.value.x += player.value.dx;
-  player.value.y += player.value.dy;
-
-  // 边界检测
-  const container = document.querySelector('.game-container');
-  if (player.value.x < 0) player.value.x = 0;
-  if (player.value.y < 0) player.value.y = 0;
-  if (player.value.x + player.value.width > container.offsetWidth) {
-    player.value.x = container.offsetWidth - player.value.width;
-  }
-  if (player.value.y + player.value.height > container.offsetHeight) {
-    player.value.y = container.offsetHeight - player.value.height;
-    player.value.isJumping = false;
-  }
-
-  // 碰撞检测
-  for (const element of mapElements.value) {
-    if (isCollidingRect(player.value, element)) {
-      // 处理碰撞
-      mapElements.value = handleCollision(player.value, element, mapElements.value, mapElementsXY.value, starCount);
-    }
-  }
-};
 const handleStarCount = (map) => {
   // 初始化计数器
   let count = 0;
@@ -132,9 +101,9 @@ watch(mapElements, (newVal, oldVal) => {
 })
 
 const gameLoop = () => {
-  updatePlayerPosition();
+  playerGame.updatePlayerPosition(player.value,mapElements.value,mapElementsXY.value,starCount.value);
   updateElementPositions(mapElements.value)
-  bulletManger.updateBullets(bullets.value, '.game-container', mapElements.value)
+  bullets.value = bulletManger.updateBullets(bullets.value, '.game-container', mapElements.value)
   requestAnimationFrame(gameLoop);
 };
 
