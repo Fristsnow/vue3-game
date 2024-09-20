@@ -40,3 +40,24 @@ export const arraysEqual = (a, b) => {
     }
     return true;
 }
+
+export const getLetterIndex = (letter) => {
+    const arr = [
+        "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
+        "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"
+    ];
+
+    // 将输入的字母转换为大写
+    const upperCaseLetter = letter.toUpperCase();
+
+    // 查找字母在数组中的索引
+    const index = arr.indexOf(upperCaseLetter);
+
+    // 检查是否找到了字母
+    if (index === -1) {
+        throw new Error("Invalid letter: must be a single uppercase letter");
+    }
+
+    return index + 1;
+};
+

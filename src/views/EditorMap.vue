@@ -1,11 +1,15 @@
 <template>
   <div>
     <div id="toolbar">
-      <button :class="{ selected: currentTool === 'ground' }" @click="selectTool('ground')">地面</button>
+      <button :class="{ selected: currentTool === MComment.DI_MI_AN }" @click="selectTool(MComment.DI_MI_AN)">地面
+      </button>
       <button :class="{ selected: currentTool === 'remove' }" @click="selectTool('remove')">移除</button>
-      <button :class="{ selected: currentTool === 'obstacle' }" @click="selectTool('obstacle')">障碍物</button>
-      <button :class="{ selected: currentTool === 'star' }" @click="selectTool('star')">星星</button>
-      <button :class="{ selected: currentTool === 'wall' }" @click="selectTool('wall')">墙</button>
+      <button :class="{ selected: currentTool === MComment.ZHANG_AI_WU }" @click="selectTool(MComment.ZHANG_AI_WU)">
+        障碍物
+      </button>
+      <button :class="{ selected: currentTool === MComment.STAR }" @click="selectTool(MComment.STAR)">星星</button>
+      <button :class="{ selected: currentTool === MComment.WALL }" @click="selectTool(MComment.WALL)">墙</button>
+      <button :class="{ selected: currentTool === MComment.M_KING }" @click="selectTool(MComment.M_KING)">M国王</button>
       <button @click="exportMap">导出地图</button>
     </div>
     <div ref="gameContainer" class="game-container" @mousedown="handleClickOrDrag" @mousemove="dragElement"
@@ -18,6 +22,7 @@
 <script setup>
 import {onMounted, ref} from 'vue';
 import {SIZE} from '@/utils/Config.js';
+import {MComment} from "@/utils/Comment.js";
 
 const gameContainer = ref(null);
 const currentTool = ref(null);
@@ -33,7 +38,7 @@ const selectTool = (tool) => {
 
 const fetchMapElements = async () => {
   try {
-    const response = await fetch('./map/map.json');
+    const response = await fetch('./map/m/map-test1.json');
     const data = await response.json();
     mapData.value = data.map;
     elements.value = convertMapDataToElements(data.map);
@@ -45,7 +50,7 @@ const fetchMapElements = async () => {
 // 添加导出地图的方法
 const exportMap = () => {
   // 创建Blob对象存储JSON数据
-  const mapDataBlob = new Blob([JSON.stringify({ map: mapData.value })], { type: 'application/json' });
+  const mapDataBlob = new Blob([JSON.stringify({map: mapData.value})], {type: 'application/json'});
 
   // 创建一个临时的URL表示这个Blob对象
   const url = URL.createObjectURL(mapDataBlob);
@@ -89,15 +94,15 @@ const convertMapDataToElements = (mapData) => {
     }
     for (let x = 0; x < row.length; x++) {
       switch (row[x]) {
-        case "0": // “0”表示地面
-          addElement(x, y, {type: 'ground', images: './img/Ground-top.jpg'});
+        case MComment.DI_MI_AN:
+          addElement(x, y, {type: MComment.DI_MI_AN, images: './img/Ground-top.jpg'});
           break;
-        case "1": // “1”表示空地
-          addElement(x, y, {type: 'space', images: ''});
+        case MComment.KONG_DI:
+          addElement(x, y, {type: MComment.KONG_DI, images: ''});
           break;
-        case "2": // “2”表示障碍物
+        case MComment.ZHANG_AI_WU:
           addElement(x, y, {
-            type: 'obstacle',
+            type: MComment.ZHANG_AI_WU,
             images: './img/Ground-top.jpg',
             direction: 1,
             speed: 2,
@@ -105,11 +110,14 @@ const convertMapDataToElements = (mapData) => {
             startX: x * tileSize
           });
           break;
-        case "3": // “3”表示星星
-          addElement(x, y, {type: 'star', images: './img/Star.png'});
+        case MComment.STAR:
+          addElement(x, y, {type: MComment.STAR, images: './img/Star.png'});
           break;
-        case "4": // “4”表示墙
-          addElement(x, y, {type: 'wall', images: './img/Ground-top.jpg'});
+        case MComment.WALL:
+          addElement(x, y, {type: MComment.WALL, images: './img/Ground-top.jpg'});
+          break;
+        case MComment.M_KING:
+          addElement(x, y, {type: MComment.M_KING, images: './img/m/m-king.png'})
           break;
       }
     }
@@ -119,40 +127,42 @@ const convertMapDataToElements = (mapData) => {
 
 const placeElement = (x, y, elementType) => {
   // 检查当前位置是否为空地
+  console.log(elementType, 'lll')
+
   if (elementType === 'remove') {
-    if (mapData.value[y][x] !== '1') {
-      mapData.value[y][x] = '1'; // 设置为空地
+    if (mapData.value[y][x] !== MComment.KONG_DI) {
+      mapData.value[y][x] = MComment.KONG_DI;
       removeElement(x, y);
     }
   } else {
-    if (mapData.value[y][x] !== '1') {
-      return;
-    }
+    // if (mapData.value[y][x] !== MComment.KONG_DI) {
+    //   return;
+    // }
 
     // 更新地图数据
     // mapData.value[y][x] = elementType;
     let value;
     switch (elementType) {
-      case 'star':
-        value = '3';
+      case MComment.STAR:
+        value = MComment.STAR;
         break;
-      case 'ground':
-        value = '0';
+      case MComment.DI_MI_AN:
+        value = MComment.DI_MI_AN;
         break;
-      case 'obstacle':
-        value = '2';
+      case MComment.ZHANG_AI_WU:
+        value = MComment.ZHANG_AI_WU;
         break;
-      case 'wall':
-        value = '4';
+      case MComment.WALL:
+        value = MComment.WALL;
         break;
       default:
-        value = '1'; // 空地
+        value = MComment.KONG_DI; // 空地
     }
 
     mapData.value[y][x] = value;
 
     // 更新 elements 数组
-    const elementConfig = getElementTypeConfig(elementType);
+    const elementConfig = getElementTypeConfig(x, elementType);
     addElement(x, y, elementConfig);
   }
 
@@ -160,25 +170,27 @@ const placeElement = (x, y, elementType) => {
   renderMap(elements.value);
 };
 
-const getElementTypeConfig = (type) => {
+const getElementTypeConfig = (x, type) => {
   switch (type) {
-    case 'ground':
-      return {type: 'ground', images: './img/Ground-top.jpg'};
-    case 'space':
-      return {type: 'space', images: ''};
-    case 'obstacle':
+    case MComment.DI_MI_AN:
+      return {type: MComment.DI_MI_AN, images: './img/Ground-top.jpg'};
+    case MComment.KONG_DI:
+      return {type: MComment.KONG_DI, images: ''};
+    case MComment.ZHANG_AI_WU:
       return {
-        type: 'obstacle',
+        type: MComment.ZHANG_AI_WU,
         images: './img/Ground-top.jpg',
         direction: 1,
         speed: 2,
         range: 3 * SIZE,
         startX: x * SIZE
       };
-    case 'star':
-      return {type: 'star', images: './img/Star.png'};
-    case 'wall':
-      return {type: 'wall', images: './img/Ground-top.jpg'};
+    case MComment.STAR:
+      return {type: MComment.STAR, images: './img/Star.png'};
+    case MComment.WALL:
+      return {type: MComment.WALL, images: './img/Ground-top.jpg'};
+    case MComment.M_KING:
+      return {type: MComment.M_KING, images: './img/m/m-king.png'}
     default:
       return {};
   }
@@ -231,6 +243,7 @@ const placeOnClick = (event) => {
 
   if (x >= 0 && y >= 0 && x < mapData.value[0].length && y < mapData.value.length) {
     placeElement(x, y, currentTool.value);
+    // console.log(currentTool.value,'kkk')
   }
 };
 const handleClickOrDrag = (event) => {
@@ -263,7 +276,7 @@ const dragElement = (event) => {
 
       // 放置路径上的所有元素
       path.forEach(([pathX, pathY]) => {
-        if (mapData.value[pathY][pathX] === '1') { // 空地
+        if (mapData.value[pathY][pathX] === MComment.KONG_DI) { // 空地
           placeElement(pathX, pathY, currentTool.value);
         }
       });
