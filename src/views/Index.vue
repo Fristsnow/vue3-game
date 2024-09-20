@@ -29,7 +29,7 @@
 </template>
 
 <script setup>
-import {ref, onMounted, watch, onBeforeUnmount} from 'vue';
+import {ref, onMounted, onBeforeUnmount} from 'vue';
 import {SIZE, updateElementPositions} from "@/utils/Config.js";
 import {fetchMapElements} from "@/utils/MapUtils.js";
 import {Player} from "@/utils/Player.js";
@@ -86,7 +86,7 @@ const gameLoop = () => {
   )
   mapElements.value = obj.mapElements
   starCount.value = obj.starCount
-  console.log(starCount.value,'star-countsssss')
+  // console.log(starCount.value,'star-countsssss')
   updateElementPositions(mapElements.value);
   bullets.value = bulletManger.updateBullets(bullets.value, '.game-container', mapElements.value)
   requestAnimationFrame(gameLoop);

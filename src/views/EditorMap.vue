@@ -155,6 +155,9 @@ const placeElement = (x, y, elementType) => {
       case MComment.WALL:
         value = MComment.WALL;
         break;
+      case MComment.M_KING:
+        value = MComment.M_KING;
+        break;
       default:
         value = MComment.KONG_DI; // 空地
     }
