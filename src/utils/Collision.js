@@ -1,5 +1,6 @@
 // 碰撞检测
 import {isCollidingCoordinate, SIZE} from "@/utils/Config.js";
+import {MComment} from "@/utils/Comment.js";
 
 export const handleCollision = (player, element, mapElements, mapElementsXY, starCount) => {
     const prevX = player.x - player.dx;
@@ -16,7 +17,7 @@ export const handleCollision = (player, element, mapElements, mapElementsXY, sta
 
     handleCollisionEvent(element, mapElementsXY)
 
-    if (element.type === 'obstacle') {
+    if (element.type === MComment.ZHANG_AI_WU) {
         if (prevX + player.width <= element.x) {
             // 从左边碰到障碍物
             if (!isNeighborOfSameType(element.x - element.width, element.y)) {
@@ -45,7 +46,7 @@ export const handleCollision = (player, element, mapElements, mapElementsXY, sta
         }
     }
 
-    if (element.type === 'wall') {
+    if (element.type === MComment.WALL) {
         if (prevX + player.width <= element.x) {
             // 从左边碰到墙
             player.x = element.x - player.width;
@@ -65,7 +66,7 @@ export const handleCollision = (player, element, mapElements, mapElementsXY, sta
     }
 
     // 地面碰撞处理逻辑保持不变
-    if (element.type === 'ground') {
+    if (element.type === MComment.DI_MI_AN) {
         if (player.dy > 0 && player.y + player.height > element.y) {
             if (!isNeighborOfSameType(element.x - element.width, element.y)) {
                 // 玩家从上方落到地面障碍物
@@ -88,7 +89,7 @@ export const handleCollision = (player, element, mapElements, mapElementsXY, sta
         }
     }
     // 碰撞类型：星星（3）
-    if (element.type === 'star') {
+    if (element.type === MComment.STAR) {
         if (starCount >= 2) {
             alert("游戏结束，请重新开始！")
         }
