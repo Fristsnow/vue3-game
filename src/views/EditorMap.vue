@@ -38,7 +38,7 @@ const selectTool = (tool) => {
 
 const fetchMapElements = async () => {
   try {
-    const response = await fetch('./map/m/map-test1.json');
+    const response = await fetch('./map/m/m1.json');
     const data = await response.json();
     mapData.value = data.map;
     elements.value = convertMapDataToElements(data.map);
